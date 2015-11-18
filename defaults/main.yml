@@ -1,0 +1,7 @@
+--- 
+  root_dir: PLEASE PROVIDE PATH TO ANSIBLE DEVELOPER RECIPES FOLDER
+  role_dir: "{{ lookup('pipe','pwd')|dirname }}"
+  dnx_home: /opt/dnx
+  dnx_version: "develop"
+  LIBUV_VERSION: "1.4.2"
+

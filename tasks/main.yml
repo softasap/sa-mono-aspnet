@@ -1,0 +1,93 @@
+---
+  - name: MONO | package-dependencies
+    apt: state=present pkg={{item}}
+    sudo: yes
+    with_items:
+      - autoconf
+      - automake
+      - build-essential
+      - curl
+      - gettext
+      - git
+      - libtool
+      - libcurl4-openssl-dev
+      - libicu-dev
+      - libssl-dev
+      - libunwind8
+      - uuid-dev
+      - zlib1g
+
+  - name: MONO | Add apt key
+    apt_key: keyserver=keyserver.ubuntu.com id=3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+    sudo: yes
+
+  - name: MONO | Add apt repository main
+    apt_repository: repo='deb http://download.mono-project.com/repo/debian wheezy main' state=present
+    sudo: yes
+
+  - name: MONO | Add apt repository wheezy-apache24-compat
+    apt_repository: repo='deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main' state=present
+    sudo: yes
+
+  - name: MONO | mono-complete
+    apt: state=present pkg=mono-complete
+    sudo: yes
+
+  - name: CERTS | https://go.microsoft.com
+    shell: "yes Yes | certmgr -ssl -m https://go.microsoft.com"
+    sudo: yes
+
+  - name: CERTS | https://nugetgallery.blob.core.windows.net
+    shell: "yes Yes | certmgr -ssl -m https://nugetgallery.blob.core.windows.net"
+    sudo: yes
+
+  - name: CERTS | https://nuget.org
+    shell: "yes Yes | certmgr -ssl -m https://nuget.org"
+    sudo: yes
+
+  - name: CERTS | sync roots
+    command: mozroots --import --sync
+    sudo: yes
+
+#  obsolete
+#  - name: KVM | install
+#    shell: "bash -c 'curl https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.sh | sh && source ~/.k/kvm/kvm.sh && kvm upgrade'"
+
+  - name: DNVM | .NET Version Manager (DNVM) Bootstrap
+    shell: "curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | sh"
+    sudo: yes
+    environment:
+      DNX_USER_HOME: "{{dnx_home}}"
+      DNX_BRANCH: "{{dnx_version}}"
+
+  - name: DNVM | .NET Version Manager (DNVM) install
+    shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -u && dnvm alias default | xargs -i ln -s {{dnx_home}}/runtimes/{} {{dnx_home}}/runtimes/default'"
+    args:
+      creates: "{{dnx_home}}/runtimes/default"
+    sudo: yes
+    environment:
+      DNX_USER_HOME: "{{dnx_home}}"
+      DNX_BRANCH: "{{dnx_version}}"
+
+  - name: DNVM | install DNX for .NET Core
+    shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -r coreclr'"
+    sudo: yes
+    environment:
+      DNX_USER_HOME: "{{dnx_home}}"
+      DNX_BRANCH: "{{dnx_version}}"
+
+
+  - name: DNVM | install DNX for .NET Core
+    shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -r mono'"
+    sudo: yes
+    environment:
+      DNX_USER_HOME: "{{dnx_home}}"
+      DNX_BRANCH: "{{dnx_version}}"
+
+
+  - name: LIBUV | install
+    shell: "bash -c 'curl -sSL https://github.com/libuv/libuv/archive/v{{LIBUV_VERSION}}.tar.gz | tar zxfv - -C /usr/local/src && cd /usr/local/src/libuv-{{LIBUV_VERSION}} && sh autogen.sh && ./configure && make && make install && rm -rf /usr/local/src/libuv-{{LIBUV_VERSION}}  && ldconfig'"
+    sudo: yes
+
+  - name: MONO | Add to path
+    include: "{{root_dir}}/use/__add_to_path.yml extra_path=\"{{dnx_home}}/runtimes/default/bin\""

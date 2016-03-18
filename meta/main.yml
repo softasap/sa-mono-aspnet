@@ -29,6 +29,8 @@ galaxy_info:
     - microsoft
     - mono
     - ubuntu
+  dependencies:
+  - role: Voronenko.developer_recipe
   #platforms:
   #- name: EL
   #  versions:

@@ -60,11 +60,16 @@
       DNX_USER_HOME: "{{dnx_home}}"
       DNX_BRANCH: "{{dnx_version}}"
 
+  - name: DNVM | Check signs of existing installation
+    stat: path="{{dnx_home}}/runtimes/default"
+    register: default_runtime_path
+
   - name: DNVM | .NET Version Manager (DNVM) install
     shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -u && dnvm alias default | xargs -i ln -s {{dnx_home}}/runtimes/{} {{dnx_home}}/runtimes/default'"
     args:
       creates: "{{dnx_home}}/runtimes/default"
     sudo: yes
+    when: default_runtime_path.stat.exists==false
     environment:
       DNX_USER_HOME: "{{dnx_home}}"
       DNX_BRANCH: "{{dnx_version}}"
@@ -72,6 +77,7 @@
   - name: DNVM | install DNX for .NET Core
     shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -r coreclr'"
     sudo: yes
+    when: default_runtime_path.stat.exists==false
     environment:
       DNX_USER_HOME: "{{dnx_home}}"
       DNX_BRANCH: "{{dnx_version}}"
@@ -80,6 +86,7 @@
   - name: DNVM | install DNX for .NET Core
     shell: "bash -c 'DNX_USER_HOME={{dnx_home}} DNX_BRANCH={{dnx_version}} && source {{dnx_home}}/dnvm/dnvm.sh && dnvm upgrade -r mono'"
     sudo: yes
+    when: default_runtime_path.stat.exists==false
     environment:
       DNX_USER_HOME: "{{dnx_home}}"
       DNX_BRANCH: "{{dnx_version}}"

@@ -90,4 +90,4 @@
     sudo: yes
 
   - name: MONO | Add to path
-    include: "{{root_dir}}/use/__add_to_path.yml extra_path=\"{{dnx_home}}/runtimes/default/bin\""
+    include: "__add_to_path.yml extra_path=\"{{dnx_home}}/runtimes/default/bin\""

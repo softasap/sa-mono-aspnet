@@ -1,7 +1,7 @@
-sa-node
-=======
+sa-mono-aspnet
+==============
 
-[![Build Status](https://travis-ci.org/softasap/sa-ruby.svg?branch=master)](https://travis-ci.org/softasap/sa-ruby)
+[![Build Status](https://travis-ci.org/softasap/sa-mono-aspnet.svg?branch=master)](https://travis-ci.org/softasap/sa-mono-aspnet)
 
 Installs recent asp.net stack for linux
 

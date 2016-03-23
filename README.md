@@ -5,3 +5,13 @@ sa-mono-aspnet
 
 Installs recent asp.net stack for linux
 
+Example of use:
+
+<pre>
+
+     - {
+         role: "sa-mono-aspnet"
+       }
+
+
+</pre>
